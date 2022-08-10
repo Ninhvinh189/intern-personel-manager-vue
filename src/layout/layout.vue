@@ -119,7 +119,7 @@
                   <fa icon="fa-list"></fa>
                 </v-list-item-icon>
                 <v-list-item-title>
-                  <router-link to="/danh-sach-nhan-vien">
+                  <router-link to="/danh-sach-phong-ban" style="text-decoration: none; color: #FFFF">
                     Danh sách phòng ban
                   </router-link>
                 </v-list-item-title>

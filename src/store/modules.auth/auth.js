@@ -20,10 +20,12 @@ export const auth = {
                 }
             );
         },
+
         logout({commit}) {
             AuthService.logout();
             commit('logout');
         },
+
         register({commit}, user) {
             return AuthService.register(user).then(
                 response => {

@@ -2,6 +2,9 @@
   <Layout>
 
     <v-app class="inspire container">
+      <v-btn @click="logout">
+        click
+      </v-btn>
       <v-form v-model="valid">
         <v-container>
           <v-row>
@@ -158,7 +161,7 @@ export default {
         user:{
           firstName:'',
           lastName:'',
-          phone:null,
+          phone:'',
           address:'',
           email:'',
           password:'',
@@ -166,7 +169,7 @@ export default {
           description:'',
           role:'',
           department:'',
-          avatar:''
+          avatar:[]
         },
         url:'',
         listRole:[],
@@ -174,26 +177,26 @@ export default {
 
         valid:false,
 
-        // nameRules: [
-        //   v => !!v || 'Name is required',
-        //   v => v.length <= 10 || 'Name must be less than 10 characters',
-        // ],
+        nameRules: [
+          v => !!v || 'Name is required',
+          v => v.length <= 10 || 'Name must be less than 10 characters',
+        ],
 
-        // emailRules: [
-        //   v => !!v || 'E-mail is required',
-        //   v => /.+@.+/.test(v) || 'E-mail must be valid',
-        // ],
-        // passwordRules:[
-        //     v => !!v || 'Password is required',
-        //     v => v.length >= 6 || 'Password must be more than 6 characters'
-        // ],
-        // phoneRules:[
-        //     v => !!v || 'Phone is required',
-        //     v => /(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(v) || 'Phone is invalid'
-        // ],
-        // addressRules:[
-        //     v => !!v || 'Address is required',
-        // ],
+        emailRules: [
+          v => !!v || 'E-mail is required',
+          v => /.+@.+/.test(v) || 'E-mail must be valid',
+        ],
+        passwordRules:[
+            v => !!v || 'Password is required',
+            v => v.length >= 6 || 'Password must be more than 6 characters'
+        ],
+        phoneRules:[
+            v => !!v || 'Phone is required',
+            v => /(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(v) || 'Phone is invalid'
+        ],
+        addressRules:[
+            v => !!v || 'Address is required',
+        ],
 
       }
     },

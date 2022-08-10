@@ -7,9 +7,8 @@ async function getListUser() {
 }
 
 async function createUser(user){
-    console.log(user)
     console.log(API_URL+'user/create-user');
-
+    console.log(user)
     return await axios.post(API_URL+'user/create-user',user)
         .then((response)=>{
             console.log(1)
