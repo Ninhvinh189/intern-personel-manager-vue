@@ -30,6 +30,10 @@ class AuthService {
         });
     }
 
+    async getMe(){
+        return await axios.get(API_URL+'auth/me');
+    }
+
 }
 
 export default new AuthService();

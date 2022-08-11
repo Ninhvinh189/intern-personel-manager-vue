@@ -6,7 +6,9 @@ const initialState = user
     : {status: {loggedIn: false}, user: null};
 export const auth = {
     namespaced: true,
-    state: initialState,
+    state: {
+        initialState,
+    },
     actions: {
         login({commit}, user) {
             return AuthService.login(user).then(
@@ -58,6 +60,7 @@ export const auth = {
         registerFailure(state) {
             state.status.loggedIn = false;
         }
+
     }
 };
 

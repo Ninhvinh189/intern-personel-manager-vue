@@ -156,7 +156,11 @@
                 <v-list-item-icon>
                   <fa icon="fa-list"></fa>
                 </v-list-item-icon>
-                <v-list-item-title> Danh sách chức vụ</v-list-item-title>
+                <v-list-item-title>
+                  <router-link to="/danh-sach-chuc-vu" style="text-decoration: none; color: #FFFF">
+                    Danh sách chức vụ
+                  </router-link>
+                </v-list-item-title>
               </v-list-item>
 
               <v-list-item>

@@ -1,13 +1,10 @@
 <template>
   <Layout>
     <div id="app" class="container">
-      <v-btn @click="a">
-        click
-      </v-btn>
       <v-app>
         <v-card>
           <v-card-title>
-            Danh sách phòng ban
+            Danh sách chức vụ
             <v-spacer></v-spacer>
             <v-text-field
                 v-model="search"
@@ -19,10 +16,9 @@
           </v-card-title>
           <v-data-table
               :headers="headers"
-              :items="listDepartment"
+              :items="listRole"
               :search="search"
-          >
-          </v-data-table>
+          ></v-data-table>
         </v-card>
       </v-app>
     </div>
@@ -32,44 +28,33 @@
 <script>
 
 import Layout from "@/layout/layout";
-import getListDepartment from "@/services/department";
+import getListRole from "@/services/role";
 
 export default {
   data(){
     return {
-      listDepartment : [],
+      listRole : [],
       search:'',
       headers:[
         {
-          text:'Tên phòng ban',
+          text:'Tên chức vụ',
           value:'name',
           sortable:false
         },
         {
-          text: 'Số lượng nhân viên',
-          value:'number_of_member',
-          sortable:false
-        },
-        {
-          text: 'Mô tả phòng ban',
+          text: 'Mô tả',
           value:'description',
           sortable:false
         },
-        {
-          text: 'Sua',
-        },
-        {
-          text:'xoa'
-        }
       ],
     }
   },
 
   created() {
-    getListDepartment().then(response=>{
-      this.listDepartment = response.data;
+    getListRole().then(response=>{
+      this.listRole = response.data;
     }).catch(()=>{
-      this.listDepartment=[];
+      this.listRole=[];
     })
   },
 
@@ -79,7 +64,7 @@ export default {
 
   methods:{
     a(){
-      console.log(2);
+      console.log(this.listUser);
     }
   },
 

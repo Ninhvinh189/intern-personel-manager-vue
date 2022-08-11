@@ -2,11 +2,22 @@
   <Layout>
 
     <v-app class="inspire container">
+
       <v-btn @click="logout">
         click
       </v-btn>
+
       <v-form v-model="valid">
         <v-container>
+          <v-alert
+              v-model="status"
+              dense
+              outlined
+              type="error"
+              v-for="(item,index) in this.messages" :key="index">
+            {{item}}
+          </v-alert>
+
           <v-row>
             <v-col
                 cols="12"
@@ -90,10 +101,14 @@
 
 
           <v-col cols="2">
-            <v-file-input
-                v-model="user.avatar"
-            >
-            </v-file-input>
+<!--            <v-file-input-->
+<!--                v-model="user.avatar"-->
+<!--            >-->
+<!--            </v-file-input>-->
+            <label>File
+              <input type="file" @change="handleFileUpload( $event )"/>
+            </label>
+
             <v-img :src="url"></v-img>
 
           </v-col>
@@ -171,12 +186,13 @@ export default {
           department:'',
           avatar:[]
         },
+        file:'',
         url:'',
         listRole:[],
         listDepartment:[],
-
         valid:false,
-
+        messages:[],
+        status:false,
         nameRules: [
           v => !!v || 'Name is required',
           v => v.length <= 10 || 'Name must be less than 10 characters',
@@ -223,13 +239,21 @@ export default {
         localStorage.clear();
         this.$router.push('login');
       },
-
+      handleFileUpload(event){
+        this.file = event.target.files[0];
+      },
       submit(){
-        createUser(this.user).then((response)=>{
-          console.log(response.data);
-          console.log("thanh cong")
-        }).catch(()=>{
-          console.log("that bai")
+        let form = new FormData();
+        for(const key in this.user){
+          form.append(key, this.user[key]);
+        }
+        form.append('avatar', this.file);
+        createUser(form).then((response)=>{
+          this.status=true;
+          this.messages = response.data.messages;
+        }).catch((error) => {
+          this.status=true;
+          this.messages = error.response.data;
         })
       },
     },
