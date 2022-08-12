@@ -129,7 +129,11 @@
                 <v-list-item-icon>
                   <fa icon="fa-solid fa-circle-plus"/>
                 </v-list-item-icon>
-                <v-list-item-title>Thêm phòng ban</v-list-item-title>
+                <v-list-item-title>
+                  <router-link to="/them-moi-phong-ban" style="text-decoration: none; color: #FFFF">
+                    Thêm mới phòng ban
+                  </router-link>
+                </v-list-item-title>
               </v-list-item>
             </v-list-item-group>
 

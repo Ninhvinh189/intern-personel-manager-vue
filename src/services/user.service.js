@@ -8,12 +8,6 @@ async function getListUser() {
 
 async function createUser(user){
     return await axios.post(API_URL+'user/create-user',user,{headers: authHeader()})
-        // .then((response)=>{
-        //     return response.data;
-        // })
-        // .catch((error)=>{
-        //     return error;
-        // })
 }
 
 export {getListUser,createUser}

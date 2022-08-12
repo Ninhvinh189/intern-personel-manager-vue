@@ -19,7 +19,28 @@
              :headers="headers"
              :items="users"
              :search="search"
-         ></v-data-table>
+         >
+           <template v-slot:[slotAction()] = "{item}">
+             <v-icon
+                 class="mr-2"
+                 @click="handleEditItem(item)"
+             >
+               mdi-pencil
+             </v-icon>
+             <v-icon
+                 @click="handleDeleteItem(item)"
+             >
+               mdi-delete
+             </v-icon>
+           </template>
+         </v-data-table >
+
+         <v-dialog v-model="dialogEdit">
+           <v-form>
+             <v-container>
+             </v-container>
+           </v-form>
+         </v-dialog>
        </v-card>
      </v-app>
    </div>
@@ -34,6 +55,8 @@ import {getListUser} from "@/services/user.service";
 export default {
   data(){
     return {
+      dialogEdit:false,
+      dialogDelete:false,
       listUser : [],
       search:'',
       headers:[
@@ -61,6 +84,10 @@ export default {
           text: 'Phòng ban',
           value: 'department',
           sortable:false
+        },
+        {
+          text:'Hành động',
+          value: 'actions'
         }
       ],
       users:[],
@@ -81,6 +108,9 @@ export default {
   },
 
   methods:{
+    slotAction(){
+      return  `item.actions`;
+    },
    a(){
      console.log(this.listUser);
    }

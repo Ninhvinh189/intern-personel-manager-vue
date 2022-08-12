@@ -1,6 +1,5 @@
 <template>
   <Layout>
-
     <v-app class="inspire container">
 
       <v-btn @click="logout">
@@ -43,9 +42,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-
           <!--          Email , password-->
-
           <v-row>
             <v-col
                 cols="12"
@@ -71,9 +68,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-
           <!--          Address/ phone-->
-
           <v-row>
             <v-col
                 cols="12"
@@ -99,12 +94,7 @@
             </v-col>
           </v-row>
 
-
           <v-col cols="2">
-<!--            <v-file-input-->
-<!--                v-model="user.avatar"-->
-<!--            >-->
-<!--            </v-file-input>-->
             <label>File
               <input type="file" @change="handleFileUpload( $event )"/>
             </label>
@@ -167,7 +157,7 @@
 <script>
 import Layout from "@/layout/layout";
 import getListRole from "@/services/role";
-import getListDepartment from "@/services/department";
+import {getListDepartment} from "@/services/department";
 import {createUser} from "@/services/user.service";
 
 export default {
@@ -213,7 +203,6 @@ export default {
         addressRules:[
             v => !!v || 'Address is required',
         ],
-
       }
     },
 
@@ -248,12 +237,19 @@ export default {
           form.append(key, this.user[key]);
         }
         form.append('avatar', this.file);
+
         createUser(form).then((response)=>{
           this.status=true;
           this.messages = response.data.messages;
+          this.$router.push('/danh-sach-nhan-vien',()=>{
+            this.$toast.success(this.messages);
+          })
         }).catch((error) => {
           this.status=true;
           this.messages = error.response.data;
+          this.messages.map((key,value)=>{
+            console.log(key+ value);
+          })
         })
       },
     },

@@ -8,6 +8,7 @@ import Login from "@/views/Login/Login";
 
 import ListDepartment from "@/views/Departments/ListDepartment";
 import ListRole from "@/views/Roles/ListRole";
+import CreateDepartment from "@/views/Departments/CreateDepartment";
 
 Vue.use(VueRouter)
 
@@ -42,6 +43,11 @@ const routes = [
     path:'/danh-sach-chuc-vu',
     name:'list-role',
     component: ListRole
+  },
+  {
+    path:'/them-moi-phong-ban',
+    name:'create-department',
+    component: CreateDepartment
   }
 ]
 
@@ -52,7 +58,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/', '/danh-sach-nhan-vien', '/them-moi-nhan-vien','/danh-sach-phong-ban','/danh-sach-chuc-vu'];
+  const publicPages = ['/', '/danh-sach-nhan-vien', '/them-moi-nhan-vien','/danh-sach-phong-ban','/danh-sach-chuc-vu','/them-moi-phong-ban'];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem('token');
 
