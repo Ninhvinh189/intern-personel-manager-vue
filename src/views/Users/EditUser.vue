@@ -8,42 +8,6 @@
 
       <v-form v-model="valid">
         <v-container>
-
-          <!--          <v-col cols="2" >-->
-          <!--            <v-card>-->
-          <!--              <label>Chon avatar-->
-          <!--                <input style="display: none" type="file" @change="handleFileUpload( $event )"/>-->
-          <!--              </label>-->
-          <!--              <v-img :src="url"></v-img>-->
-          <!--            </v-card>-->
-          <!--          </v-col>-->
-
-          <!--          <v-col cols="2">-->
-          <!--            <div>-->
-          <!--              <div class="file-upload-form">-->
-          <!--                Upload avatar-->
-          <!--                <input type="file" @change="handleFileUpload($event)" accept="image/*">-->
-          <!--              </div>-->
-          <!--              <div class="image-preview" v-show="url !== null">-->
-          <!--                <img class="preview" :src="url">-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--          </v-col>-->
-
-          <v-col cols="2">
-            <v-file-input
-                accept="image/png, image/jpeg, image/bmp"
-                placeholder="Pick an avatar"
-                prepend-icon="mdi-camera"
-                label="Avatar"
-                @change="handleFileUpload($event)"
-            >
-            </v-file-input>
-
-            <v-img :src="url"></v-img>
-          </v-col>
-
-
           <v-row>
             <v-col
                 cols="12"
@@ -69,32 +33,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <!--          Email , password-->
-          <v-row>
-            <v-col
-                cols="12"
-                md="4"
-            >
-              <v-text-field
-                  v-model="user.email"
-                  :rules="emailRules"
-                  label="E-mail"
-                  required
-              ></v-text-field>
-            </v-col>
-            <v-col
-                cols="12"
-                md="4"
-            >
-              <v-text-field
-                  v-model="user.password"
-                  :rules="passwordRules"
-                  label="Password"
-                  required
-                  type="password"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+
           <!--          Address/ phone-->
           <v-row>
             <v-col
@@ -165,6 +104,13 @@
             </v-menu>
           </v-col>
 
+          <v-col cols="2">
+            <label>File
+              <input type="file" @change="handleFileUpload( $event )"/>
+            </label>
+            <v-img :src="url"></v-img>
+          </v-col>
+
           <!--Department and rule-->
 
           <v-row>
@@ -218,11 +164,9 @@
 
 <script>
 import Layout from "@/layout/layout";
-import {getListRole} from "@/services/role";
-import {getListDepartment} from "@/services/department";
-import {createUser} from "@/services/user.service";
 
 export default {
+
   data() {
     return {
       menu: false,
@@ -233,8 +177,6 @@ export default {
         lastName: '',
         phone: '',
         address: '',
-        email: '',
-        password: '',
         date_of_birth: '',
         description: '',
         role: '',
@@ -246,21 +188,11 @@ export default {
       listRole: [],
       listDepartment: [],
       valid: false,
-      messages: [],
-      status: false,
       nameRules: [
         v => !!v || 'Name is required',
         v => v.length <= 10 || 'Name must be less than 10 characters',
       ],
 
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+/.test(v) || 'E-mail must be valid',
-      ],
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 6 || 'Password must be more than 6 characters'
-      ],
       phoneRules: [
         v => !!v || 'Phone is required',
         v => /(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(v) || 'Phone is invalid'
@@ -270,61 +202,8 @@ export default {
       ],
     }
   },
-
-  created() {
-    getListRole().then((response) => {
-      this.listRole = response.data
-    }).catch(() => {
-      this.listRole = []
-    })
-    getListDepartment().then((response) => {
-      this.listDepartment = response.data;
-    }).catch(() => {
-      this.listDepartment = []
-    })
-  },
-
   components: {
-    Layout,
-  },
-
-  methods: {
-    logout() {
-      console.log(this.listRole)
-    },
-
-    handleFileUpload(event) {
-      console.log(event)
-      this.file = event;
-      if (this.file) {
-        this.url = URL.createObjectURL(this.file);
-        URL.revokeObjectURL(this.file); // free memory
-      } else {
-        this.url = null
-      }
-    },
-
-    submit() {
-      let form = new FormData();
-      for (const key in this.user) {
-        form.append(key, this.user[key]);
-      }
-      form.append('avatar', this.file);
-
-      createUser(form).then((response) => {
-        this.status = true;
-        this.$router.push('/danh-sach-nhan-vien', () => {
-          this.$toast.success(response.data.message);
-        })
-      }).catch((error) => {
-        this.status = true;
-        this.messages = error.response.data;
-        this.messages.map((key, value) => {
-          console.log(key + value);
-        })
-      })
-    },
-  },
-
+    Layout
+  }
 }
 </script>

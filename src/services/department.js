@@ -1,4 +1,4 @@
-import API_URL from "@/plugins/constants";
+import {API_URL} from "@/plugins/constants";
 import authHeader from "@/services/auth-header";
 import axios from "axios";
 

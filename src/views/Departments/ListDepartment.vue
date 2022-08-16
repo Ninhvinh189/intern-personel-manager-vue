@@ -3,9 +3,6 @@
     <div id="app" class="container">
       <v-app>
         <v-card>
-<!--          <v-alert type="success" v-model="this.status">-->
-<!--            {{this.message}}-->
-<!--          </v-alert>-->
           <v-card-title>
             Danh sách phòng ban
             <v-dialog v-model="dialog" max-width="500" max-height="500">
@@ -238,10 +235,12 @@ export default {
             this.message = res.data.message;
             this.status = true;
             this.$toast.success(this.message);
+            console.log(this.message)
             this.getListDepartment();
           }).catch(error=>{
-            this.message = error.response.data.message;
+            console.log(error.response.data.message)
             this.status = true;
+            this.$toast.error(error.response.data.message);
       })
     },
     submitEdit(){

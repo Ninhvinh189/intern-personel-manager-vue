@@ -20,27 +20,41 @@
              :items="users"
              :search="search"
          >
+           <template v-slot:[slotDetail()]="{item}">
+             <v-icon
+                 @click="handleDetail(item)"
+             >
+               mdi-account-box
+             </v-icon>
+           </template>
+
            <template v-slot:[slotAction()] = "{item}">
              <v-icon
                  class="mr-2"
-                 @click="handleEditItem(item)"
+                 @click="handleEditUser(item)"
              >
                mdi-pencil
              </v-icon>
              <v-icon
-                 @click="handleDeleteItem(item)"
+                 @click="handleDeleteUser(item)"
              >
                mdi-delete
              </v-icon>
            </template>
          </v-data-table >
 
-         <v-dialog v-model="dialogEdit">
-           <v-form>
-             <v-container>
-             </v-container>
-           </v-form>
+         <v-dialog v-model="dialogDelete" max-width="500px">
+           <v-card>
+             <v-card-title class="text-h5">Bạn chắc chắn sẽ xóa phòng ban này?</v-card-title>
+             <v-card-actions>
+               <v-spacer></v-spacer>
+               <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+               <v-btn color="blue darken-1" text @click="submitDelete()">OK</v-btn>
+               <v-spacer></v-spacer>
+             </v-card-actions>
+           </v-card>
          </v-dialog>
+
        </v-card>
      </v-app>
    </div>
@@ -51,12 +65,14 @@
 
 import Layout from "@/layout/layout";
 import {getListUser} from "@/services/user.service";
+import {deleteUser} from "@/services/user.service";
 
 export default {
   data(){
     return {
       dialogEdit:false,
       dialogDelete:false,
+      idDeletedUser:null,
       listUser : [],
       search:'',
       headers:[
@@ -86,8 +102,19 @@ export default {
           sortable:false
         },
         {
+          text:'Chức vụ',
+          vale:'role',
+          sortable: false
+        },
+        {
+          text:'Chi tiet',
+          value:'detail',
+          sortable: false,
+        },
+        {
           text:'Hành động',
-          value: 'actions'
+          value: 'actions',
+          sortable:false
         }
       ],
       users:[],
@@ -95,12 +122,7 @@ export default {
   },
 
   created() {
-    getListUser()
-        .then(response => {
-          this.listUser = response.data;
-        }).catch(()=>{
-          console.log(333);
-    });
+    this.getListUser()
   },
 
   components:{
@@ -108,22 +130,60 @@ export default {
   },
 
   methods:{
+    handleEditUser(item){
+      this.$router.push({name:'user-update',params:{id:item.id}})
+    },
+    getListUser(){
+      getListUser()
+          .then(response => {
+            this.listUser = response.data;
+          }).catch(()=>{
+        console.log(333);
+      });
+    },
+    submitDelete(){
+      this.dialogDelete=false;
+      deleteUser(this.idDeletedUser).then((res)=>{
+        this.getListUser();
+        this.$toast.success(res.data.message);
+      })
+    },
+
+    handleDeleteUser(item){
+      this.dialogDelete=true;
+      this.idDeletedUser = item.id
+    },
+
+    close(){
+      this.dialogDelete=false;
+    },
+
+    handleDetail(item){
+      this.$router.push({name:'user-profile', params:{id:item.id}})
+    },
+    slotDetail(){
+      return `item.detail`;
+    },
+
     slotAction(){
       return  `item.actions`;
     },
    a(){
-     console.log(this.listUser);
+     console.log(this.listUser[0].roles[0].name);
    }
   },
 
   watch:{
     listUser(value) {
       this.users = value.map(item => ({
+        id : item.id,
         name : item?.name,
         email: item?.email,
         department: item?.departments[0]?.name,
         address: item?.profile?.address,
-        date_of_birth: item?.profile?.date_of_birth
+        role: item?.roles[0]?.name,
+        date_of_birth: item?.profile?.date_of_birth,
+        phone : item?.profile?.phone,
       }))
     }
   }

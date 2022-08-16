@@ -38,20 +38,22 @@
 
       <v-divider></v-divider>
 
-      <v-card class="transparent">
-        <v-list class="blue-grey darken-4">
-          <v-list-item>
-            <v-list-item-icon>
-              <fa icon="fa-home"></fa>
-            </v-list-item-icon>
-
+      <router-link to="/" class="text-decoration-none">
+        <v-card class="transparent">
+          <v-list class="blue-grey darken-4">
             <v-list-item>
-              <v-list-item-title>Home</v-list-item-title>
-            </v-list-item>
+              <v-list-item-icon>
+                <fa icon="fa-home"></fa>
+              </v-list-item-icon>
 
-          </v-list-item>
-        </v-list>
-      </v-card>
+              <v-list-item>
+                <v-list-item-title>Home</v-list-item-title>
+              </v-list-item>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </router-link>
+
 
       <v-divider></v-divider>
 
@@ -204,7 +206,7 @@
         </div>
       </v-col>
 
-      <v-col cols="2" class="d-flex justify-space-around">
+      <v-col cols="2" class="d-flex justify-space-around align-center">
 
         <v-btn>
           <v-badge color="red" inline overlap>
@@ -212,44 +214,71 @@
           </v-badge>
           <fa icon="bell"></fa>
         </v-btn>
+        <v-menu
+            bottom
+            min-width="200px"
+            rounded
+            offset-y
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn
+                icon
+                x-large
+                v-on="on"
+            >
+              <v-avatar
+                  size="48"
+              >
+                <v-img :src="avatar"></v-img>
+              </v-avatar>
 
-        <!--        <template>-->
-        <!--          <v-btn-->
-        <!--              @click.stop="rightDrawer=!rightDrawer"-->
-        <!--          >-->
-        <!--            <v-badge color="red" >-->
-        <!--              <span slot="badge">2</span>-->
-        <!--            </v-badge>-->
-        <!--            <fa icon="bell"></fa>-->
-        <!--          </v-btn>-->
+            </v-btn>
+          </template>
 
-        <!--          <v-alert-->
-        <!--              :value="rightDrawer"-->
-        <!--              color="pink"-->
-        <!--              dark-->
-        <!--              border="top"-->
-        <!--              icon="mdi-home"-->
-        <!--              transition="scale-transition"-->
-        <!--          >-->
-        <!--            2 unread notifications-->
-        <!--          </v-alert>-->
-        <!--          -->
-        <!--        </template>-->
+          <v-card>
+            <v-list-item-content class="justify-center">
+              <div class="mx-auto text-center">
+                <v-avatar
+                >
+                  <v-img :src="avatar"></v-img>
+                </v-avatar>
+                <h3 class="pt-3">{{ user.name}}</h3>
+                <p class="text-caption mt-1">
+                  {{ user.email }}
+                </p>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    depressed
+                    rounded
+                    text
+                    color="black"
+                >
+                  <router-link to="/thong-tin-ban-than" style="text-decoration: none; color:black">My profile</router-link>
+                </v-btn>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    depressed
+                    rounded
+                    text
+                >
+                  Edit Account
+                </v-btn>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    depressed
+                    rounded
+                    text
+                    @click="handleLogout"
+                >
+                  Logout
+                </v-btn>
+              </div>
+            </v-list-item-content>
+          </v-card>
 
-        <!--        <v-btn icon @click.stop="rightDrawer = !rightDrawer">-->
-        <!--          <v-badge color="red" overlap>-->
-        <!--            <span slot="badge">2</span>-->
-        <!--            <fa icon="bell"></fa>-->
-        <!--          </v-badge>-->
-        <!--        </v-btn>-->
+        </v-menu>
 
-        <v-toolbar bottom v-show="rightDrawer">
-          <span>2 unread notifications</span>
-        </v-toolbar>
 
-        <v-btn>
-          <fa icon="user"></fa>
-        </v-btn>
       </v-col>
     </v-app-bar>
 
@@ -267,20 +296,35 @@
 </template>
 
 <script>
-
+import AuthService from "@/services/auth.service";
+import {IMG_URL} from "@/plugins/constants";
 export default {
   name: 'Home',
 
   data() {
     return {
+      avatar: '',
+      user:[],
       checkTransNav: false,
       right: true,
       rightDrawer: false,
       drawer:false,
     }
   },
+  created() {
+    AuthService.getMe().then(res=>{
+      this.user = res.data
+      this.avatar = IMG_URL+this.user.profile.avatar;
+    }).catch(()=>{
+      this.user = [];
+    })
+  },
   methods:{
-
+    handleLogout()
+    {
+      localStorage.clear();
+      this.$router.push('login');
+    }
   }
 
 
