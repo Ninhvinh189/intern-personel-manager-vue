@@ -7,6 +7,7 @@ async function getListUser() {
 }
 
 async function createUser(user){
+    console.log(user);
     return await axios.post(API_URL+'user/create-user',user,{headers: authHeader()})
 }
 async function findUser(id){
@@ -16,4 +17,17 @@ async function findUser(id){
 async function deleteUser(id){
     return await axios.delete(API_URL+'user/destroy-user/'+ id,{headers: authHeader()})
 }
-export {getListUser,createUser, findUser, deleteUser}
+
+async function updateAvatar(avatar,id){
+    return await axios.post(API_URL+'user/update-avatar/'+ id, avatar,{headers:authHeader()});
+}
+
+async function updateUser(user, id){
+    return await axios.post(API_URL+'user/update-user/'+id, user, {headers: authHeader()});
+}
+
+async function getListUserDepartment(id){
+    return await axios.get(API_URL + 'user/list-user-department/'+id, {headers: authHeader()});
+}
+
+export {getListUser,createUser, findUser, deleteUser, updateAvatar, updateUser, getListUserDepartment}

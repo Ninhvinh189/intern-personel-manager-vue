@@ -83,7 +83,7 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item>
+              <v-list-item v-show="roleMe==='admin'">
                 <v-list-item-icon>
                   <router-link to="/them-moi-nhan-vien">
                     <fa icon="fa-user-plus"></fa>
@@ -127,16 +127,6 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item>
-                <v-list-item-icon>
-                  <fa icon="fa-solid fa-circle-plus"/>
-                </v-list-item-icon>
-                <v-list-item-title>
-                  <router-link to="/them-moi-phong-ban" style="text-decoration: none; color: #FFFF">
-                    Thêm mới phòng ban
-                  </router-link>
-                </v-list-item-title>
-              </v-list-item>
             </v-list-item-group>
 
           </v-list-group>
@@ -167,13 +157,6 @@
                     Danh sách chức vụ
                   </router-link>
                 </v-list-item-title>
-              </v-list-item>
-
-              <v-list-item>
-                <v-list-item-icon>
-                  <fa icon="fa-plus"></fa>
-                </v-list-item-icon>
-                <v-list-item-title>Thêm chức vụ</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list-group>
@@ -253,7 +236,7 @@
                     text
                     color="black"
                 >
-                  <router-link to="/thong-tin-ban-than" style="text-decoration: none; color:black">My profile</router-link>
+                  <router-link to="/thong-tin-ban-than" style="text-decoration: none; color:black">Thông tin bản thân</router-link>
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
@@ -261,7 +244,7 @@
                     rounded
                     text
                 >
-                  Edit Account
+                  <router-link to="/cap-nhat-thong-tin-ban-than" style="text-decoration: none; color:black">Chính sửa thông tin</router-link>
                 </v-btn>
                 <v-divider class="my-3"></v-divider>
                 <v-btn
@@ -270,7 +253,7 @@
                     text
                     @click="handleLogout"
                 >
-                  Logout
+                  Đăng xuất
                 </v-btn>
               </div>
             </v-list-item-content>
@@ -297,7 +280,7 @@
 
 <script>
 import AuthService from "@/services/auth.service";
-import {IMG_URL} from "@/plugins/constants";
+
 export default {
   name: 'Home',
 
@@ -309,17 +292,23 @@ export default {
       right: true,
       rightDrawer: false,
       drawer:false,
+      roleMe:localStorage.getItem('roleMe')
     }
   },
   created() {
     AuthService.getMe().then(res=>{
       this.user = res.data
-      this.avatar = IMG_URL+this.user.profile.avatar;
     }).catch(()=>{
       this.user = [];
     })
   },
+
+  updated() {
+    this.avatar = localStorage.getItem('avatar');
+  },
+
   methods:{
+
     handleLogout()
     {
       localStorage.clear();

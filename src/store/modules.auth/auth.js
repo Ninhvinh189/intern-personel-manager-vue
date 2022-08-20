@@ -1,5 +1,6 @@
 import AuthService from "@/services/auth.service";
 import authService from "@/services/auth.service";
+import {IMG_URL} from "@/plugins/constants";
 
 const user = localStorage.getItem('token');
 const initialState = user
@@ -9,7 +10,9 @@ export const auth = {
     namespaced: true,
     state: {
         initialState,
-        me:{}
+        me:{},
+        roleMe:'',
+        id:''
     },
     actions: {
         login({commit}, user) {
@@ -47,8 +50,10 @@ export const auth = {
     mutations: {
         getMe(state){
             authService.getMe().then(res =>{
-                console.log(res.data);
                 state.me = res.data
+                localStorage.setItem('avatar', IMG_URL+ res.data?.profile?.avatar)
+                localStorage.setItem('roleMe',res.data?.roles[0]?.name);
+                localStorage.setItem('myId', res.data.id);
             }).catch(()=>{
                 console.log("loi");
             })

@@ -6,29 +6,8 @@
         click
       </v-btn>
 
-      <v-form v-model="valid">
-        <v-container>
-
-          <!--          <v-col cols="2" >-->
-          <!--            <v-card>-->
-          <!--              <label>Chon avatar-->
-          <!--                <input style="display: none" type="file" @change="handleFileUpload( $event )"/>-->
-          <!--              </label>-->
-          <!--              <v-img :src="url"></v-img>-->
-          <!--            </v-card>-->
-          <!--          </v-col>-->
-
-          <!--          <v-col cols="2">-->
-          <!--            <div>-->
-          <!--              <div class="file-upload-form">-->
-          <!--                Upload avatar-->
-          <!--                <input type="file" @change="handleFileUpload($event)" accept="image/*">-->
-          <!--              </div>-->
-          <!--              <div class="image-preview" v-show="url !== null">-->
-          <!--                <img class="preview" :src="url">-->
-          <!--              </div>-->
-          <!--            </div>-->
-          <!--          </v-col>-->
+      <v-form v-model="valid" ref="form">
+        <v-container style="max-width: 900px">
 
           <v-col cols="2">
             <v-file-input
@@ -42,7 +21,6 @@
 
             <v-img :src="url"></v-img>
           </v-col>
-
 
           <v-row>
             <v-col
@@ -121,50 +99,76 @@
             </v-col>
           </v-row>
 
-          <v-col md="8">
-            <v-menu
-                ref="menu"
-                v-model="menu"
-                :close-on-content-click="false"
-                :return-value.sync="user.date_of_birth"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                    v-model="user.date_of_birth"
-                    label="Ngày sinh"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                  v-model="user.date_of_birth"
-                  no-title
-                  scrollable
-              >
-                <v-spacer></v-spacer>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="menu = false"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="$refs.menu.save(user.date_of_birth)"
-                >
-                  OK
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-          </v-col>
+<!--          <v-col md="8">-->
+<!--            <v-menu-->
+<!--                ref="menu"-->
+<!--                v-model="menu"-->
+<!--                :close-on-content-click="false"-->
+<!--                :return-value.sync="user.date_of_birth"-->
+<!--                transition="scale-transition"-->
+<!--                offset-y-->
+<!--                min-width="auto"-->
+<!--            >-->
+<!--              <template v-slot:activator="{ on, attrs }">-->
+<!--                <v-text-field-->
+<!--                    v-model="user.date_of_birth"-->
+<!--                    label="Ngày sinh"-->
+<!--                    prepend-icon="mdi-calendar"-->
+<!--                    readonly-->
+<!--                    v-bind="attrs"-->
+<!--                    v-on="on"-->
+<!--                ></v-text-field>-->
+<!--              </template>-->
+<!--              <v-date-picker-->
+<!--                  v-model="user.date_of_birth"-->
+<!--                  no-title-->
+<!--                  scrollable-->
+<!--              >-->
+<!--                <v-spacer></v-spacer>-->
+<!--                <v-btn-->
+<!--                    text-->
+<!--                    color="primary"-->
+<!--                    @click="menu = false"-->
+<!--                >-->
+<!--                  Cancel-->
+<!--                </v-btn>-->
+<!--                <v-btn-->
+<!--                    text-->
+<!--                    color="primary"-->
+<!--                    @click="$refs.menu.save(user.date_of_birth)"-->
+<!--                >-->
+<!--                  OK-->
+<!--                </v-btn>-->
+<!--              </v-date-picker>-->
+<!--            </v-menu>-->
+<!--          </v-col>-->
 
+          <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                  v-model="user.date_of_birth"
+                  label="Birthday date"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+                v-model="user.date_of_birth"
+                :active-picker.sync="activePicker"
+                :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
+                min="1950-01-01"
+                @change="save"
+            ></v-date-picker>
+          </v-menu>
           <!--Department and rule-->
 
           <v-row>
@@ -177,6 +181,7 @@
                   item-text="name"
                   item-value="id"
                   label="Department"
+                  :rules="selectRule"
                   v-model="user.department"
               ></v-select>
             </v-col>
@@ -190,6 +195,7 @@
                   item-text="name"
                   item-value="id"
                   label="Role"
+                  :rules="selectRule"
                   v-model="user.role"
               ></v-select>
             </v-col>
@@ -206,9 +212,21 @@
             </v-col>
           </v-row>
 
-          <v-btn type="submit" class="primary" @click.prevent="submit">
+          <v-btn type="submit" class="primary" @click.prevent="handleSubmit">
             submit
           </v-btn>
+
+          <v-dialog v-model="dialogSubmit" max-width="500px">
+            <v-card>
+              <v-card-title class="text-h5">Bạn chắc chắn với quyết định này chứ ? </v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close">Hủy bỏ</v-btn>
+                <v-btn color="blue darken-1" text @click="submit">Gửi</v-btn>
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
 
         </v-container>
       </v-form>
@@ -228,6 +246,8 @@ export default {
       menu: false,
       modal: false,
       menu2: false,
+      dialogSubmit:false,
+      activePicker: null,
       user: {
         firstName: '',
         lastName: '',
@@ -247,26 +267,28 @@ export default {
       listDepartment: [],
       valid: false,
       messages: [],
-      status: false,
+
+      selectRule: [(v) => !!v || "Không được bỏ trống !"],
+
       nameRules: [
-        v => !!v || 'Name is required',
-        v => v.length <= 10 || 'Name must be less than 10 characters',
+        v => !!v || 'Tên người dùng chưa được nhập !',
+        v => v.length <= 10 || 'Cần nhỏ hơn 10 ký tự !',
       ],
 
       emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+/.test(v) || 'E-mail must be valid',
+        v => !!v || 'E-mail phải bắt buộc !',
+        v =>  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail chưa hợp lệ !',
       ],
       passwordRules: [
-        v => !!v || 'Password is required',
-        v => v.length >= 6 || 'Password must be more than 6 characters'
+        v => !!v || 'Mật khẩu chưa được nhập !',
+        v => v.length >= 6 || 'Mật khẩu phải lớn hơn 6 kí tự !'
       ],
       phoneRules: [
-        v => !!v || 'Phone is required',
-        v => /(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(v) || 'Phone is invalid'
+        v => !!v || 'Số điện thoại chưa được nhập !',
+        v => /(84|0[3|5|7|8|9])+([0-9]{8})\b/.test(v) || 'Số điện thoại chưa hợp lệ !'
       ],
       addressRules: [
-        v => !!v || 'Address is required',
+        v => !!v || 'Địa chỉ chưa được nhập !',
       ],
     }
   },
@@ -285,16 +307,22 @@ export default {
   },
 
   components: {
-    Layout,
+    Layout
   },
 
   methods: {
+    validate() {
+      if (this.$refs.form.validate()) {
+        this.snackbar = true;
+        this.dialogSubmit = true;
+      }
+    },
+
     logout() {
       console.log(this.listRole)
     },
 
     handleFileUpload(event) {
-      console.log(event)
       this.file = event;
       if (this.file) {
         this.url = URL.createObjectURL(this.file);
@@ -304,25 +332,45 @@ export default {
       }
     },
 
+    handleSubmit() {
+      this.validate();
+    },
+
+    close(){
+      this.dialogSubmit = false;
+    },
+
     submit() {
       let form = new FormData();
+      this.dialogSubmit = false;
       for (const key in this.user) {
         form.append(key, this.user[key]);
       }
       form.append('avatar', this.file);
-
       createUser(form).then((response) => {
-        this.status = true;
         this.$router.push('/danh-sach-nhan-vien', () => {
           this.$toast.success(response.data.message);
         })
-      }).catch((error) => {
-        this.status = true;
-        this.messages = error.response.data;
-        this.messages.map((key, value) => {
-          console.log(key + value);
-        })
+      }).catch(err => {
+        if (err.response.status === 500){
+          this.$toast.error(err.response.data.message);
+        }
+        let errs = err.response.data.errors;
+        for (let item in errs){
+          this.$toast.warning(errs[item][0]);
+        }
       })
+    },
+
+    save (date) {
+      this.$refs.menu.save(date)
+    },
+
+  },
+
+  watch: {
+    menu (val) {
+      val && setTimeout(() => (this.activePicker = 'YEAR'))
     },
   },
 

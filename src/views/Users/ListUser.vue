@@ -5,7 +5,7 @@
        <v-btn @click="a()">clcik</v-btn>
        <v-card>
          <v-card-title>
-           Danh sach nhan vien
+           Danh sách nhân viên
            <v-spacer></v-spacer>
            <v-text-field
                v-model="search"
@@ -35,6 +35,7 @@
              >
                mdi-pencil
              </v-icon>
+
              <v-icon
                  @click="handleDeleteUser(item)"
              >
@@ -45,11 +46,11 @@
 
          <v-dialog v-model="dialogDelete" max-width="500px">
            <v-card>
-             <v-card-title class="text-h5">Bạn chắc chắn sẽ xóa phòng ban này?</v-card-title>
+             <v-card-title class="text-h5">Bạn chắc chắn sẽ xóa người dùng này?</v-card-title>
              <v-card-actions>
                <v-spacer></v-spacer>
-               <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-               <v-btn color="blue darken-1" text @click="submitDelete()">OK</v-btn>
+               <v-btn color="blue darken-1" text @click="close">Hủy bỏ</v-btn>
+               <v-btn color="blue darken-1" text @click="submitDelete()">Thực hiện</v-btn>
                <v-spacer></v-spacer>
              </v-card-actions>
            </v-card>
@@ -66,6 +67,7 @@
 import Layout from "@/layout/layout";
 import {getListUser} from "@/services/user.service";
 import {deleteUser} from "@/services/user.service";
+import {getListUserDepartment} from "@/services/user.service";
 
 export default {
   data(){
@@ -75,6 +77,7 @@ export default {
       idDeletedUser:null,
       listUser : [],
       search:'',
+      roleMe:localStorage.getItem('roleMe'),
       headers:[
         {
           text:'Họ tên',
@@ -97,13 +100,18 @@ export default {
           sortable:false
         },
         {
+          text: 'Số điện thoại',
+          value:'phone',
+          sortable: false
+        },
+        {
           text: 'Phòng ban',
           value: 'department',
           sortable:false
         },
         {
           text:'Chức vụ',
-          vale:'role',
+          value:'role',
           sortable: false
         },
         {
@@ -122,7 +130,11 @@ export default {
   },
 
   created() {
-    this.getListUser()
+    if(this.roleMe==='admin'){
+      this.getListUser();
+    }else if (this.roleMe === 'leader'){
+      this.getListUserDepartment();
+    }
   },
 
   components:{
@@ -130,15 +142,28 @@ export default {
   },
 
   methods:{
+    getListUserDepartment(){
+      getListUserDepartment(6).then(res => {
+        this.listUser = res.data;
+      }).catch(()=>{
+        console.log(2222);
+      })
+    },
+
     handleEditUser(item){
-      this.$router.push({name:'user-update',params:{id:item.id}})
+      if (item.id === parseInt(localStorage.getItem('myId'))){
+        this.$router.push({name:'update-me'});
+      }else{
+        this.$router.push({name:'user-update',params:{id:item.id}})
+
+      }
     },
     getListUser(){
       getListUser()
           .then(response => {
             this.listUser = response.data;
           }).catch(()=>{
-        console.log(333);
+            this.listUser = [];
       });
     },
     submitDelete(){
@@ -161,6 +186,7 @@ export default {
     handleDetail(item){
       this.$router.push({name:'user-profile', params:{id:item.id}})
     },
+
     slotDetail(){
       return `item.detail`;
     },
@@ -169,15 +195,16 @@ export default {
       return  `item.actions`;
     },
    a(){
-     console.log(this.listUser[0].roles[0].name);
+     console.log(this.users);
    }
   },
 
   watch:{
     listUser(value) {
+      console.log(value);
       this.users = value.map(item => ({
         id : item.id,
-        name : item?.name,
+        name : item?.firstName + " " + item?.lastName,
         email: item?.email,
         department: item?.departments[0]?.name,
         address: item?.profile?.address,
@@ -185,6 +212,7 @@ export default {
         date_of_birth: item?.profile?.date_of_birth,
         phone : item?.profile?.phone,
       }))
+      console.log(this.users)
     }
   }
 }

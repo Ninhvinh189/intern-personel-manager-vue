@@ -14,7 +14,13 @@ async function createRole(role)
 
 async function deleteRole(id)
 {
-    return await axios.delete(API_URL+'/role/delete/' +id,{headers: authHeader()})
+    return await axios.delete(API_URL+'role/delete/' +id,{headers: authHeader()})
 }
-export {getListRole, createRole, deleteRole};
+
+async  function editRole(role)
+{
+    return await axios.post(API_URL+'role/update/'+role.id, role, {headers:authHeader()})
+}
+
+export {getListRole, createRole, deleteRole, editRole};
 
