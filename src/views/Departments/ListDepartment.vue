@@ -3,45 +3,54 @@
     <div id="app" class="container">
       <v-app>
         <v-card>
-<!--          <v-alert type="success" v-model="this.status">-->
-<!--            {{this.message}}-->
-<!--          </v-alert>-->
           <v-card-title>
             Danh sách phòng ban
+            <v-spacer></v-spacer>
+            <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+            >
+            </v-text-field>
+          </v-card-title>
+
+          <div class="pl-3 pb-8 pt-1" v-show="roleMe==='admin'">
             <v-dialog v-model="dialog" max-width="500" max-height="500">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                    color="red lighten-2"
+                    color="primary"
                     dark
                     v-bind="attrs"
                     v-on="on"
                 >
-                  Them phong ban
+                  Thêm mới
                 </v-btn>
               </template>
               <v-form class="white">
                 <v-container class="pa-7">
                   <v-app-bar-title>
-                    Thêm phòng ban
+                    Nhập thông tin phòng ban
                   </v-app-bar-title>
                   <v-row>
                     <v-col
-                    cols="12"
-                    class="pt-4"
+                        cols="12"
+                        class="pt-4"
                     >
                       <v-text-field
-                      v-model="form.name"
-                      label="Tên phòng ban"
+                          v-model="form.name"
+                          label="Tên phòng ban"
                       ></v-text-field>
                     </v-col>
 
                     <v-col
-                      cols="12"
+                        cols="12"
                     >
                       <v-textarea
                           solo
-                        v-model="form.description"
-                        label="Mô tả"
+                          v-model="form.description"
+                          label="Mô tả"
                       ></v-textarea>
                     </v-col>
                   </v-row>
@@ -55,31 +64,24 @@
               </v-form>
 
             </v-dialog>
-            <v-spacer></v-spacer>
-            <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Search"
-                single-line
-                hide-details
-            >
-            </v-text-field>
-          </v-card-title>
+          </div>
 
           <v-data-table
               :headers="headers"
               :items="listDepartment"
               :search="search"
           >
-            <template v-slot:[slotAction()] = "{item}">
+            <template v-slot:[slotAction()]="{item}">
               <v-icon
                   class="mr-2"
                   @click="handleEditItem(item)"
+                  :disabled="roleMe === 'leader'"
               >
                 mdi-pencil
               </v-icon>
               <v-icon
                   @click="handleDeleteItem(item)"
+                  :disabled="roleMe === 'leader'"
               >
                 mdi-delete
               </v-icon>
@@ -116,8 +118,8 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                  <v-btn color="blue darken-1" text @click="submitEdit">Save</v-btn>
+                  <v-btn color="blue darken-1" text @click="close">Hủy bỏ</v-btn>
+                  <v-btn color="blue darken-1" text @click="submitEdit">Gửi</v-btn>
                 </v-card-actions>
               </v-container>
             </v-form>
@@ -128,8 +130,8 @@
               <v-card-title class="text-h5">Bạn chắc chắn sẽ xóa phòng ban này?</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="submitDelete">OK</v-btn>
+                <v-btn color="blue darken-1" text @click="close">Hủy bỏ</v-btn>
+                <v-btn color="blue darken-1" text @click="submitDelete">Thực hiện</v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
@@ -150,42 +152,43 @@ import {editDepartment} from "@/services/department";
 import {deleteDepartment} from "@/services/department";
 
 export default {
-  data(){
+  data() {
     return {
-      dialog:false,
-      dialogEdit:false,
-      dialogDelete:false,
-      status:false,
-      message:null,
-      idItemDeleted:null,
-      form:{
-        name:'',
-        description:'',
+      dialog: false,
+      dialogEdit: false,
+      dialogDelete: false,
+      status: false,
+      message: null,
+      idItemDeleted: null,
+      roleMe:localStorage.getItem('roleMe'),
+      form: {
+        name: '',
+        description: '',
       },
 
-      formEdit:{
-        id:'',
-        name:'',
+      formEdit: {
+        id: '',
+        name: '',
         description: ''
       },
 
-      listDepartment : [],
-      search:'',
-      headers:[
+      listDepartment: [],
+      search: '',
+      headers: [
         {
-          text:'Tên phòng ban',
-          value:'name',
-          sortable:false
+          text: 'Tên phòng ban',
+          value: 'name',
+          sortable: false
         },
         {
           text: 'Số lượng nhân viên',
-          value:'number_of_member',
-          sortable:false
+          value: 'number_of_member',
+          sortable: false
         },
         {
           text: 'Mô tả phòng ban',
-          value:'description',
-          sortable:false
+          value: 'description',
+          sortable: false
         },
         {
           text: 'Hành động',
@@ -199,75 +202,89 @@ export default {
     this.getListDepartment();
   },
 
-  components:{
+  components: {
     Layout
   },
 
-  methods:{
+  methods: {
     getListDepartment() {
-      getListDepartment().then(response=>{
+      getListDepartment().then(response => {
         this.listDepartment = response.data;
-      }).catch(()=>{
-        this.listDepartment=[];
+      }).catch(() => {
+        this.listDepartment = [];
       })
     },
-    handleEditItem(item){
+    handleEditItem(item) {
       this.dialogEdit = true;
       this.formEdit.id = item.id;
       this.formEdit.name = item.name;
       this.formEdit.description = item.description;
     },
-    handleDeleteItem(item){
-      this.dialogDelete=true;
+    handleDeleteItem(item) {
+      this.dialogDelete = true;
       this.idItemDeleted = item.id;
     },
-    slotAction(){
+    slotAction() {
       return `item.actions`;
     },
 
-    close(){
+    close() {
       this.dialog = false;
-      this.dialogEdit=false;
-      this.dialogDelete=false;
+      this.dialogEdit = false;
+      this.dialogDelete = false;
     },
 
-    save(){
+    save() {
       this.dialog = false;
       createDepartment(this.form)
-          .then(res=>{
+          .then(res => {
             this.message = res.data.message;
             this.status = true;
             this.$toast.success(this.message);
+            this.form = [];
             this.getListDepartment();
-          }).catch(error=>{
-            this.message = error.response.data.message;
-            this.status = true;
+          }).catch(err => {
+        if (err.response.status === 500) {
+          this.$toast.error(err.response.data.message);
+        }
+        let errs = err.response.data;
+        for (let item in errs) {
+          this.$toast.warning(errs[item][0]);
+        }
+
       })
     },
-    submitEdit(){
+    submitEdit() {
       this.dialogEdit = false;
       editDepartment(this.formEdit)
-          .then(res=>{
+          .then(res => {
             this.message = res.data.message;
             this.status = true;
             this.$toast.success(this.message);
             this.getListDepartment();
           })
-          .catch(error=>{
-            this.message = error.response.data.message;
-            this.status = true;
+          .catch(err => {
+            console.log(err);
+            if (err.response.status === 500){
+              this.$toast.error(err.response.data.message);
+            }
+            let errs = err.response.data;
+            for (let item in errs){
+              console.log(errs[item][0])
+              this.$toast.warning(errs[item][0]);
+            }
           })
     },
-    submitDelete(){
-      this.dialogDelete=false;
+    submitDelete() {
+      this.dialogDelete = false;
       deleteDepartment(this.idItemDeleted)
-          .then(res=>{
+          .then(res => {
             this.message = res.data.message;
             this.status = true;
             this.$toast.success(this.message);
             this.getListDepartment();
           })
-          .catch(error=>{
+          .catch(error => {
             this.message = error.response.data.message;
             this.status = true;
           })

@@ -38,20 +38,22 @@
 
       <v-divider></v-divider>
 
-      <v-card class="transparent">
-        <v-list class="blue-grey darken-4">
-          <v-list-item>
-            <v-list-item-icon>
-              <fa icon="fa-home"></fa>
-            </v-list-item-icon>
-
+      <router-link to="/" class="text-decoration-none">
+        <v-card class="transparent">
+          <v-list class="blue-grey darken-4">
             <v-list-item>
-              <v-list-item-title>Home</v-list-item-title>
-            </v-list-item>
+              <v-list-item-icon>
+                <fa icon="fa-home"></fa>
+              </v-list-item-icon>
 
-          </v-list-item>
-        </v-list>
-      </v-card>
+              <v-list-item>
+                <v-list-item-title>Home</v-list-item-title>
+              </v-list-item>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </router-link>
+
 
       <v-divider></v-divider>
 
@@ -81,7 +83,7 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item>
+              <v-list-item v-show="roleMe==='admin'">
                 <v-list-item-icon>
                   <router-link to="/them-moi-nhan-vien">
                     <fa icon="fa-user-plus"></fa>
@@ -125,16 +127,6 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item>
-                <v-list-item-icon>
-                  <fa icon="fa-solid fa-circle-plus"/>
-                </v-list-item-icon>
-                <v-list-item-title>
-                  <router-link to="/them-moi-phong-ban" style="text-decoration: none; color: #FFFF">
-                    Thêm mới phòng ban
-                  </router-link>
-                </v-list-item-title>
-              </v-list-item>
             </v-list-item-group>
 
           </v-list-group>
@@ -165,13 +157,6 @@
                     Danh sách chức vụ
                   </router-link>
                 </v-list-item-title>
-              </v-list-item>
-
-              <v-list-item>
-                <v-list-item-icon>
-                  <fa icon="fa-plus"></fa>
-                </v-list-item-icon>
-                <v-list-item-title>Thêm chức vụ</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list-group>
@@ -204,7 +189,7 @@
         </div>
       </v-col>
 
-      <v-col cols="2" class="d-flex justify-space-around">
+      <v-col cols="2" class="d-flex justify-space-around align-center">
 
         <v-btn>
           <v-badge color="red" inline overlap>
@@ -212,44 +197,71 @@
           </v-badge>
           <fa icon="bell"></fa>
         </v-btn>
+        <v-menu
+            bottom
+            min-width="200px"
+            rounded
+            offset-y
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn
+                icon
+                x-large
+                v-on="on"
+            >
+              <v-avatar
+                  size="48"
+              >
+                <v-img :src="avatar"></v-img>
+              </v-avatar>
 
-        <!--        <template>-->
-        <!--          <v-btn-->
-        <!--              @click.stop="rightDrawer=!rightDrawer"-->
-        <!--          >-->
-        <!--            <v-badge color="red" >-->
-        <!--              <span slot="badge">2</span>-->
-        <!--            </v-badge>-->
-        <!--            <fa icon="bell"></fa>-->
-        <!--          </v-btn>-->
+            </v-btn>
+          </template>
 
-        <!--          <v-alert-->
-        <!--              :value="rightDrawer"-->
-        <!--              color="pink"-->
-        <!--              dark-->
-        <!--              border="top"-->
-        <!--              icon="mdi-home"-->
-        <!--              transition="scale-transition"-->
-        <!--          >-->
-        <!--            2 unread notifications-->
-        <!--          </v-alert>-->
-        <!--          -->
-        <!--        </template>-->
+          <v-card>
+            <v-list-item-content class="justify-center">
+              <div class="mx-auto text-center">
+                <v-avatar
+                >
+                  <v-img :src="avatar"></v-img>
+                </v-avatar>
+                <h3 class="pt-3">{{ user.name}}</h3>
+                <p class="text-caption mt-1">
+                  {{ user.email }}
+                </p>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    depressed
+                    rounded
+                    text
+                    color="black"
+                >
+                  <router-link to="/thong-tin-ban-than" style="text-decoration: none; color:black">Thông tin bản thân</router-link>
+                </v-btn>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    depressed
+                    rounded
+                    text
+                >
+                  <router-link to="/cap-nhat-thong-tin-ban-than" style="text-decoration: none; color:black">Chính sửa thông tin</router-link>
+                </v-btn>
+                <v-divider class="my-3"></v-divider>
+                <v-btn
+                    depressed
+                    rounded
+                    text
+                    @click="handleLogout"
+                >
+                  Đăng xuất
+                </v-btn>
+              </div>
+            </v-list-item-content>
+          </v-card>
 
-        <!--        <v-btn icon @click.stop="rightDrawer = !rightDrawer">-->
-        <!--          <v-badge color="red" overlap>-->
-        <!--            <span slot="badge">2</span>-->
-        <!--            <fa icon="bell"></fa>-->
-        <!--          </v-badge>-->
-        <!--        </v-btn>-->
+        </v-menu>
 
-        <v-toolbar bottom v-show="rightDrawer">
-          <span>2 unread notifications</span>
-        </v-toolbar>
 
-        <v-btn>
-          <fa icon="user"></fa>
-        </v-btn>
       </v-col>
     </v-app-bar>
 
@@ -267,20 +279,41 @@
 </template>
 
 <script>
+import AuthService from "@/services/auth.service";
 
 export default {
   name: 'Home',
 
   data() {
     return {
+      avatar: '',
+      user:[],
       checkTransNav: false,
       right: true,
       rightDrawer: false,
       drawer:false,
+      roleMe:localStorage.getItem('roleMe')
     }
   },
+  created() {
+    AuthService.getMe().then(res=>{
+      this.user = res.data
+    }).catch(()=>{
+      this.user = [];
+    })
+  },
+
+  updated() {
+    this.avatar = localStorage.getItem('avatar');
+  },
+
   methods:{
 
+    handleLogout()
+    {
+      localStorage.clear();
+      this.$router.push('login');
+    }
   }
 
 

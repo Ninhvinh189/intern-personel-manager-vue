@@ -8,7 +8,10 @@ import Login from "@/views/Login/Login";
 
 import ListDepartment from "@/views/Departments/ListDepartment";
 import ListRole from "@/views/Roles/ListRole";
-import CreateDepartment from "@/views/Departments/CreateDepartment";
+import MyProfile from "@/views/Users/MyProfile";
+import ProfileUser from "@/views/Users/ProfileUser";
+import EditUser from "@/views/Users/EditUser";
+import EditMyProfile from "@/views/Users/EditMyProfile";
 
 Vue.use(VueRouter)
 
@@ -45,9 +48,24 @@ const routes = [
     component: ListRole
   },
   {
-    path:'/them-moi-phong-ban',
-    name:'create-department',
-    component: CreateDepartment
+    path:'/thong-tin-ban-than',
+    name:'my-profile',
+    component: MyProfile
+  },
+  {
+    path:'/thong-tin-nhan-vien/:id',
+    name:'user-profile',
+    component: ProfileUser
+  },
+  {
+    path:'/cap-nhat-thong-tin/:id',
+    name:'user-update',
+    component: EditUser
+  },
+  {
+    path: '/cap-nhat-thong-tin-ban-than',
+    name:'update-me',
+    component: EditMyProfile
   }
 ]
 
@@ -58,8 +76,11 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/', '/danh-sach-nhan-vien', '/them-moi-nhan-vien','/danh-sach-phong-ban','/danh-sach-chuc-vu','/them-moi-phong-ban'];
-  const authRequired = !publicPages.includes(to.path);
+
+  const publicPages = [
+      'list-user','home','create-user','list-departments','list-role','my-profile','user-profile','user-update','update-me',
+  ]
+  const authRequired = !publicPages.includes(to.name);
   const loggedIn = localStorage.getItem('token');
 
   if (!authRequired && loggedIn==null) {
@@ -68,6 +89,21 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
+router.beforeEach((to,from,next)=>{
+  const adminPages = [
+    'create-user'
+  ]
+  const adminRequired = !adminPages.includes(to.name);
+  const roleMe = localStorage.getItem('roleMe');
+
+  if (!adminRequired && roleMe !== 'admin') {
+    alert('Bạn không có quyền vào trang này !');
+    next('');
+  } else {
+    next();
+  }
+})
 
 
 export default router

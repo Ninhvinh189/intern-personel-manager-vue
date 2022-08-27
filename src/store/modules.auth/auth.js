@@ -1,4 +1,6 @@
 import AuthService from "@/services/auth.service";
+import authService from "@/services/auth.service";
+import {IMG_URL} from "@/plugins/constants";
 
 const user = localStorage.getItem('token');
 const initialState = user
@@ -8,12 +10,16 @@ export const auth = {
     namespaced: true,
     state: {
         initialState,
+        me:{},
+        roleMe:'',
+        id:''
     },
     actions: {
         login({commit}, user) {
             return AuthService.login(user).then(
                 user => {
                     commit('loginSuccess', user);
+                    commit('getMe');
                     return Promise.resolve(user);
                 },
                 error => {
@@ -42,8 +48,18 @@ export const auth = {
         }
     },
     mutations: {
+        getMe(state){
+            authService.getMe().then(res =>{
+                state.me = res.data
+                localStorage.setItem('avatar', IMG_URL+ res.data?.profile?.avatar)
+                localStorage.setItem('roleMe',res.data?.roles[0]?.name);
+                localStorage.setItem('myId', res.data.id);
+            }).catch(()=>{
+                console.log("loi");
+            })
+        },
         loginSuccess(state, user) {
-            state.status.loggedIn = true;
+            state.initialState.status.loggedIn = true;
             state.user = user;
         },
         loginFailure(state) {

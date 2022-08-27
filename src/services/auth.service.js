@@ -1,5 +1,6 @@
 import axios from 'axios';
-import API_URL from "@/plugins/constants";
+import {API_URL} from "@/plugins/constants";
+import authHeader from "@/services/auth-header";
 class AuthService {
     async login(user) {
         return await  axios
@@ -31,9 +32,8 @@ class AuthService {
     }
 
     async getMe(){
-        return await axios.get(API_URL+'auth/me');
+        return await axios.get(API_URL+'auth/me',{headers: authHeader()});
     }
-
 }
 
 export default new AuthService();
