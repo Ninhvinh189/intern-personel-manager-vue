@@ -88,7 +88,7 @@
                   Địa chỉ: <v-list-item-content class="pl-4">{{user?.profile?.address}}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
-                  Số điện thoại: <v-list-item-content class="pl-4">0{{user?.profile?.phone}}</v-list-item-content>
+                  Số điện thoại: <v-list-item-content class="pl-4">{{user?.profile?.phone}}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
                   Ngày sinh: <v-list-item-content class="pl-4">{{user?.profile?.date_of_birth}}</v-list-item-content>

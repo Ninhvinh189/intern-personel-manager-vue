@@ -44,7 +44,7 @@
                   <v-card-title>Tải ảnh lên</v-card-title>
                   <v-file-input
                       accept="image/png, image/jpeg, image/bmp"
-                      placeholder="Pick an avatar"
+                      placeholder="Tải ảnh lên"
                       prepend-icon="mdi-camera"
                       @change="handleFileUpload($event)"
                   >
@@ -58,7 +58,7 @@
                         text
                         @click="dialog = false"
                     >
-                      Cancel
+                      Hủy bỏ
                     </v-btn>
                     <v-btn
                         color="primary"
@@ -66,7 +66,7 @@
                         depressed
                         @click="handleUpdateAvatar"
                     >
-                      Save
+                      Lưu
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -221,7 +221,7 @@
               </v-col>
             </v-row>
 
-            <v-btn type="submit" class="primary" @click.prevent="handleSubmit">
+            <v-btn type="submit" class="primary" @click.prevent="handleSubmit()">
               submit
             </v-btn>
 

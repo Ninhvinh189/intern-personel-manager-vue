@@ -2,17 +2,13 @@
   <Layout>
     <v-app class="inspire container">
 
-      <v-btn @click="logout">
-        click
-      </v-btn>
-
       <v-form v-model="valid" ref="form">
         <v-container style="max-width: 900px">
 
           <v-col cols="2">
             <v-file-input
                 accept="image/png, image/jpeg, image/bmp"
-                placeholder="Pick an avatar"
+                placeholder="Tải ảnh lên"
                 prepend-icon="mdi-camera"
                 label="Avatar"
                 @change="handleFileUpload($event)"
@@ -82,7 +78,7 @@
               <v-text-field
                   v-model="user.phone"
                   :rules="phoneRules"
-                  label="Phone"
+                  label="Số điện thoại"
                   required
               ></v-text-field>
             </v-col>
@@ -93,55 +89,12 @@
               <v-text-field
                   v-model="user.address"
                   :rules="addressRules"
-                  label="Address"
+                  label="Địa chỉ"
                   required
               ></v-text-field>
             </v-col>
           </v-row>
 
-<!--          <v-col md="8">-->
-<!--            <v-menu-->
-<!--                ref="menu"-->
-<!--                v-model="menu"-->
-<!--                :close-on-content-click="false"-->
-<!--                :return-value.sync="user.date_of_birth"-->
-<!--                transition="scale-transition"-->
-<!--                offset-y-->
-<!--                min-width="auto"-->
-<!--            >-->
-<!--              <template v-slot:activator="{ on, attrs }">-->
-<!--                <v-text-field-->
-<!--                    v-model="user.date_of_birth"-->
-<!--                    label="Ngày sinh"-->
-<!--                    prepend-icon="mdi-calendar"-->
-<!--                    readonly-->
-<!--                    v-bind="attrs"-->
-<!--                    v-on="on"-->
-<!--                ></v-text-field>-->
-<!--              </template>-->
-<!--              <v-date-picker-->
-<!--                  v-model="user.date_of_birth"-->
-<!--                  no-title-->
-<!--                  scrollable-->
-<!--              >-->
-<!--                <v-spacer></v-spacer>-->
-<!--                <v-btn-->
-<!--                    text-->
-<!--                    color="primary"-->
-<!--                    @click="menu = false"-->
-<!--                >-->
-<!--                  Cancel-->
-<!--                </v-btn>-->
-<!--                <v-btn-->
-<!--                    text-->
-<!--                    color="primary"-->
-<!--                    @click="$refs.menu.save(user.date_of_birth)"-->
-<!--                >-->
-<!--                  OK-->
-<!--                </v-btn>-->
-<!--              </v-date-picker>-->
-<!--            </v-menu>-->
-<!--          </v-col>-->
 
           <v-menu
               ref="menu"
@@ -154,11 +107,12 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                   v-model="user.date_of_birth"
-                  label="Birthday date"
+                  label="Ngày sinh"
                   prepend-icon="mdi-calendar"
                   readonly
                   v-bind="attrs"
                   v-on="on"
+                  style="width: 800px"
               ></v-text-field>
             </template>
             <v-date-picker
@@ -180,7 +134,7 @@
                   :items="listDepartment"
                   item-text="name"
                   item-value="id"
-                  label="Department"
+                  label="Phòng ban"
                   :rules="selectRule"
                   v-model="user.department"
               ></v-select>
@@ -194,7 +148,7 @@
                   :items="this.listRole"
                   item-text="name"
                   item-value="id"
-                  label="Role"
+                  label="Chức vụ"
                   :rules="selectRule"
                   v-model="user.role"
               ></v-select>
@@ -205,7 +159,7 @@
             <v-col cols="12" sm="11">
               <v-textarea
                   solo
-                  label="Description"
+                  label="Mô tả"
                   v-model="user.description"
 
               ></v-textarea>

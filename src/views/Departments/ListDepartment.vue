@@ -9,7 +9,7 @@
             <v-text-field
                 v-model="search"
                 append-icon="mdi-magnify"
-                label="Search"
+                label="Tìm kiếm..."
                 single-line
                 hide-details
             >
@@ -57,8 +57,8 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                    <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                    <v-btn color="blue darken-1" text @click="close">Hủy bỏ</v-btn>
+                    <v-btn color="blue darken-1" text @click="save">Gửi</v-btn>
                   </v-card-actions>
                 </v-container>
               </v-form>
@@ -75,7 +75,7 @@
               <v-icon
                   class="mr-2"
                   @click="handleEditItem(item)"
-                  :disabled="roleMe === 'leader'"
+                  v-if="roleMe === 'admin'"
               >
                 mdi-pencil
               </v-icon>
@@ -174,7 +174,15 @@ export default {
 
       listDepartment: [],
       search: '',
-      headers: [
+      headers: [],
+    }
+  },
+
+  created() {
+    this.getListDepartment();
+    if (this.roleMe === "admin") {
+      this.headers = [
+
         {
           text: 'Tên phòng ban',
           value: 'name',
@@ -194,12 +202,27 @@ export default {
           text: 'Hành động',
           value: 'actions'
         }
-      ],
-    }
-  },
+      ]
+    } else {
+      this.headers = [
 
-  created() {
-    this.getListDepartment();
+        {
+          text: 'Tên phòng ban',
+          value: 'name',
+          sortable: false
+        },
+        {
+          text: 'Số lượng nhân viên',
+          value: 'number_of_member',
+          sortable: false
+        },
+        {
+          text: 'Mô tả phòng ban',
+          value: 'description',
+          sortable: false
+        }
+      ]
+    }
   },
 
   components: {
@@ -235,13 +258,15 @@ export default {
     },
 
     save() {
+      console.log(this.form);
       this.dialog = false;
       createDepartment(this.form)
           .then(res => {
             this.message = res.data.message;
             this.status = true;
             this.$toast.success(this.message);
-            this.form = [];
+            this.form.name = '';
+            this.form.description = '';
             this.getListDepartment();
           }).catch(err => {
         if (err.response.status === 500) {

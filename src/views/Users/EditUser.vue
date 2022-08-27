@@ -2,9 +2,16 @@
   <Layout>
     <v-app class="inspire container">
 
-      <v-btn @click="a">
-        click
-      </v-btn>
+
+      <v-card-title>Cập nhật thông tin nhân viên </v-card-title>
+
+      <template >
+        <v-progress-linear
+            color="deep-purple"
+            height="7"
+            rounded
+        ></v-progress-linear>
+      </template>
 
       <v-col
           class="d-flex justify-center"
@@ -36,7 +43,7 @@
             <v-card-title>Tải ảnh lên</v-card-title>
             <v-file-input
                 accept="image/png, image/jpeg, image/bmp"
-                placeholder="Pick an avatar"
+                placeholder="Tải avatar lên"
                 prepend-icon="mdi-camera"
                 @change="handleFileUpload($event)"
             >
@@ -50,7 +57,7 @@
                   text
                   @click="dialog = false"
               >
-                Cancel
+                Hủy bỏ
               </v-btn>
               <v-btn
                   color="primary"
@@ -58,7 +65,7 @@
                   depressed
                   @click="handleUpdateAvatar"
               >
-                Save
+                Lưu
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -111,7 +118,7 @@
               <v-text-field
                   v-model="user.phone"
                   :rules="phoneRules"
-                  label="Phone"
+                  label="Số điện thoại"
                   required
               >{{user.phone}}</v-text-field>
             </v-col>
@@ -122,55 +129,39 @@
               <v-text-field
                   v-model="user.address"
                   :rules="addressRules"
-                  label="Address"
+                  label="Địa chỉ"
                   required
               >{{user.address}}</v-text-field>
             </v-col>
           </v-row>
 
-          <v-col md="12">
-            <v-menu
-                ref="menu"
-                v-model="menu"
-                :close-on-content-click="false"
-                :return-value.sync="user.date_of_birth"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                    v-model="user.date_of_birth"
-                    label="Ngày sinh"
-                    prepend-icon="mdi-calendar"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                >{{user.date_of_birth}}</v-text-field>
-              </template>
-              <v-date-picker
+          <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
                   v-model="user.date_of_birth"
-                  no-title
-                  scrollable
-              >
-                <v-spacer></v-spacer>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="menu = false"
-                >
-                  Cancel
-                </v-btn>
-                <v-btn
-                    text
-                    color="primary"
-                    @click="$refs.menu.save(user.date_of_birth)"
-                >
-                  OK
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-          </v-col>
+                  label="Ngày sinh"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                  style="width: 800px"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+                v-model="user.date_of_birth"
+                :active-picker.sync="activePicker"
+                :max="(new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10)"
+                min="1950-01-01"
+                @change="save"
+            ></v-date-picker>
+          </v-menu>
 
           <!--Department and rule-->
 
@@ -183,7 +174,7 @@
                   :items="listDepartment"
                   item-text="name"
                   item-value="id"
-                  label="Department"
+                  label="Phòng ban"
                   :readonly="roleMe==='leader'"
                   :disabled="roleMe==='leader'"
                   :rules="selectRule"
@@ -199,7 +190,7 @@
                   :items="this.listRole"
                   item-text="name"
                   item-value="id"
-                  label="Role"
+                  label="Chức vụ"
                   :rules="selectRule"
                   v-model="user.role"
               ></v-select>
@@ -210,7 +201,7 @@
             <v-col cols="12" sm="12">
               <v-textarea
                   solo
-                  label="Description"
+                  label="Mô tả"
                   v-model="user.description"
               >{{user.description}}</v-textarea>
             </v-col>
@@ -257,6 +248,7 @@ export default {
       dialog:false,
       dialogSubmit:false,
       url_avatar:'',
+      activePicker: null,
       roleMe:localStorage.getItem('roleMe'),
       user: {
         id:'',
