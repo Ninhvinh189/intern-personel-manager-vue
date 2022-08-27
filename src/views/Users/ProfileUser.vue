@@ -76,7 +76,7 @@
             <v-card height="70%">
               <v-list class="pl-16">
                 <v-list-item>
-                  Họ tên:  <v-list-item-content class="pl-4">{{user.name }}</v-list-item-content>
+                  Họ tên:  <v-list-item-content class="pl-4">{{user.firstName + ' ' + user.lastName }}</v-list-item-content>
                 </v-list-item>
                 <v-list-item>
                   Email: <v-list-item-content class="pl-4">{{user.email}}</v-list-item-content>

@@ -9,7 +9,7 @@
             <v-text-field
                 v-model="search"
                 append-icon="mdi-magnify"
-                label="Search"
+                label="Tìm kiếm..."
                 single-line
                 hide-details
             ></v-text-field>
@@ -170,7 +170,31 @@ export default {
         name:'',
         description:''
       },
-      headers:[
+      headers:[],
+
+      nameRules: [
+        v => !!v || 'Tên chức vụ chưa được nhập !',
+      ],
+    }
+  },
+
+  created() {
+    this.getListRole();
+    if(this.roleMe !== 'admin'){
+      this.headers = [
+        {
+          text:'Tên chức vụ',
+          value:'name',
+          sortable:false
+        },
+        {
+          text: 'Mô tả',
+          value:'description',
+          sortable:false
+        },
+      ]
+    }else{
+      this.headers = [
         {
           text:'Tên chức vụ',
           value:'name',
@@ -186,16 +210,8 @@ export default {
           value:'actions',
           sortable: false
         }
-      ],
-
-      nameRules: [
-        v => !!v || 'Tên chức vụ chưa được nhập !',
-      ],
+      ]
     }
-  },
-
-  created() {
-    this.getListRole();
   },
 
   components:{

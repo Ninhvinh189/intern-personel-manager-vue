@@ -12,7 +12,7 @@ import MyProfile from "@/views/Users/MyProfile";
 import ProfileUser from "@/views/Users/ProfileUser";
 import EditUser from "@/views/Users/EditUser";
 import EditMyProfile from "@/views/Users/EditMyProfile";
-
+import Register from "@/views/Login/Register";
 Vue.use(VueRouter)
 
 const routes = [
@@ -36,6 +36,11 @@ const routes = [
     path:'/login',
     name:'login',
     component: Login
+  },
+  {
+    path:'/register',
+    name:'register',
+    component: Register
   },
   {
     path:'/danh-sach-phong-ban',

@@ -2,7 +2,6 @@
   <Layout>
    <div id="app" class="container">
      <v-app>
-       <v-btn @click="a()">clcik</v-btn>
        <v-card>
          <v-card-title>
            Danh sách nhân viên
@@ -10,7 +9,7 @@
            <v-text-field
                v-model="search"
                append-icon="mdi-magnify"
-               label="Search"
+               label="Tìm kiếm"
                single-line
                hide-details
            ></v-text-field>
@@ -143,7 +142,7 @@ export default {
 
   methods:{
     getListUserDepartment(){
-      getListUserDepartment(6).then(res => {
+      getListUserDepartment(localStorage.getItem('myId')).then(res => {
         this.listUser = res.data;
       }).catch(()=>{
         console.log(2222);

@@ -28,7 +28,7 @@
 
             <v-list-item v-if="!checkTransNav">
               <v-list-item-title>
-                <h2>Vinh</h2>
+                <h2>KIAI</h2>
               </v-list-item-title>
             </v-list-item>
 
@@ -83,7 +83,7 @@
                 </v-list-item-title>
               </v-list-item>
 
-              <v-list-item v-show="roleMe==='admin'">
+              <v-list-item v-show = "roleMe==='admin'">
                 <v-list-item-icon>
                   <router-link to="/them-moi-nhan-vien">
                     <fa icon="fa-user-plus"></fa>
@@ -176,13 +176,13 @@
             </v-btn>
           </v-app-bar-nav-icon>
 
-          <div class="pl-4">Dashboard</div>
+          <div class="pl-4">Trang chủ</div>
         </div>
       </v-col>
 
       <v-col cols="3">
         <div class="d-flex" style="align-items: center;">
-          <v-text-field placeholder="Search..." class="mr-5 pt-4"></v-text-field>
+          <v-text-field placeholder="Tìm kiếm..." class="mr-5 pt-4"></v-text-field>
           <v-btn>
             <fa icon="magnifying-glass"></fa>
           </v-btn>
